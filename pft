@@ -135,3 +135,24 @@ PL/SQL procedure successfully completed.
 Commit complete.
 SQL>
 ----------------------------------------------
+DECLARE
+  s_id crude.id%TYPE := &id;
+  s_name crude.name%TYPE;
+  id_ge EXCEPTION;
+BEGIN
+  SELECT id, name 
+  INTO s_id, s_name 
+  FROM crude
+  WHERE id = s_id;
+
+  IF s_id >= 2 THEN
+    RAISE id_ge;
+  END IF;
+
+EXCEPTION
+  WHEN id_ge THEN
+    DBMS_OUTPUT.PUT_LINE('Error: ID is greater than or equal to 2.');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('An unexpected error occurred: ' || SQLERRM);
+END;
+/
