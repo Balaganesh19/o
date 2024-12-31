@@ -42,3 +42,96 @@ PL/SQL procedure successfully completed.
 Commit complete.
 
 ---------------------------------------------------------
+SQL> create or replace trigger ghv before insert on crude
+  2  begin
+  3  dbms_output.put_line('inserting');
+  4  end;
+  5  /
+
+Trigger created.
+
+SQL> insert into crude(id,name) values(9,'hgaty');
+inserting
+
+1 row created.
+
+Commit complete.
+SQL>
+---------------------------------------------------------
+SQL> create or replace trigger ghv before insert or update or delete on crude
+  2  begin
+  3  if inserting then
+  4  dbms_output.put_line('inserting');
+  5  elsif updating then
+  6  dbms_output.put_line('updating');
+  7  elsif deleting then
+  8  dbms_output.put_line('deleting');
+  9  end if;
+ 10  end;
+ 11  /
+
+Trigger created.
+
+SQL> delete from crude where id=9;
+deleting
+
+1 row deleted.
+
+Commit complete.
+SQL>
+---------------------------------------------------------
+SQL> select * from crude;
+
+        ID NAME
+---------- ----------
+         4 gayatri
+         1 sree
+         3 swetha
+         5 swamy
+---------------------------------------------------------
+SQL> declare
+  2  row number;
+  3  begin
+  4  update crude
+  5  set id=id+1;
+  6  if sql%notfound then
+  7  dbms_output.put_line('no such records found');
+  8  elsif sql%found then
+  9   row:=sql%rowcount;
+ 10  dbms_output.put_line(row);
+ 11  end if;
+ 12  end;
+ 13  /
+updating
+4
+
+PL/SQL procedure successfully completed.
+
+Commit complete.
+SQL>
+-------------------------------------------------
+SQL> declare
+  2  s_id crude.id%type;
+  3  s_name crude.name%type;
+  4  cursor xv is select id,name from crude;
+  5  begin
+  6  open xv;
+  7  update crude set id=id+1;
+  8  loop
+  9  fetch xv into s_id,s_name;
+ 10  exit when xv%notfound;
+ 11  dbms_output.put_line(s_id||s_name);
+ 12  end loop;
+ 13  end;
+ 14  /
+updating
+5gayatri
+2sree
+4swetha
+6swamy
+
+PL/SQL procedure successfully completed.
+
+Commit complete.
+SQL>
+----------------------------------------------
